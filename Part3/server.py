@@ -61,7 +61,7 @@ def get_employee_details(id):
 
         ]
 
-        return details_list
+    return details_list
 
 
 # Return the Yearly Salary of the Employee using the given Employee ID
@@ -140,6 +140,7 @@ class ClientThread(threading.Thread):
 
         # Server gets user choice from Client
         ch_in = self.client_socket.recv(1024).decode('utf-8')
+        # Converting ch_in to int to check what option to use in following code
         ch = int(ch_in)
         print(ch)
 
@@ -154,6 +155,7 @@ class ClientThread(threading.Thread):
                 # Checking for menu item 6 because the Server does not need more information from Client
                 if ch == 6:
 
+                    # The server sends a goodbye message to the Client and exits 
                     self.client_socket.send(bytes("\n\nThank you for using the HR Control Panel!\n\n", "utf-8"))
 
                 else:
@@ -168,8 +170,7 @@ class ClientThread(threading.Thread):
                         if verify_id(emp_id) is not False:
 
                             month_sal = get_employee_monthly_salary(emp_id)
-                            self.client_socket.send(
-                                bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
+                            self.client_socket.send(bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Monthly Salary', self.addr))
@@ -181,8 +182,7 @@ class ClientThread(threading.Thread):
 
                         if verify_id(emp_id) is not False:
                             year_sal = get_employee_yearly_salary(emp_id)
-                            self.client_socket.send(
-                                bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
+                            self.client_socket.send(bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Yearly Salary', self.addr))
@@ -221,9 +221,13 @@ class ClientThread(threading.Thread):
 
                         if verify_id(emp_id) is not False:
 
+                            # Call function to get all Employee Details + Passing in emp_id
                             emp_details = get_employee_details(emp_id)
+
+                            # Saving each item in the returned list as a variable
                             id, name, month_salary, year_salary, leave_days_available, leave_days_used = emp_details
 
+                            # Sending this string to Client to print out all the details
                             self.client_socket.send(bytes(f"\nThe available information for this Employee is: " +
                                                           f"\n\tEmployee ID: {id}" +
                                                           f"\n\tEmployee Name: {name}" +
@@ -245,6 +249,7 @@ class ClientThread(threading.Thread):
         self.client_socket.close()
 
 
+# This starts the python socket server under localhost:12345
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('localhost', 12345))
