@@ -2,7 +2,6 @@ import socket
 
 
 def start_client():
-
     # Connect to the server via socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect(('localhost', 12345))
@@ -17,7 +16,6 @@ def start_client():
 
     # Option 6 does not require additional information from Server, so we can check if it's is safe to close socket
     if choice != 6:
-
         # Server asks for Employee ID in order to proceed
         emp_id_request = client_socket.recv(1024).decode()
         emp_id = input(f"\033[95m{emp_id_request}\033[0m")

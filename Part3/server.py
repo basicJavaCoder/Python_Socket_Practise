@@ -3,7 +3,6 @@ import os
 import threading
 import queue
 
-
 # Create the Employees List to store Employee details
 employees = {
     '001': {
@@ -19,7 +18,7 @@ employees = {
         'LeaveDaysUsed': 3
     },
     '003': {
-        'Name': 'Lana McDevitt',
+        'Name': 'Lana Shelton',
         'MonthlySalary': 9000,
         'AnnualLeaveDays': 30,
         'LeaveDaysUsed': 2
@@ -29,7 +28,6 @@ employees = {
 
 # Verify that the given Employee ID is in the list
 def verify_id(id):
-
     employee = employees.get(id)
 
     if employee is None:
@@ -42,9 +40,7 @@ def verify_id(id):
 
 # Return all details related to the Employee using the given Employee ID
 def get_employee_details(id):
-
     if verify_id(id) is not False:
-
         employee = employees.get(id)
 
         emp_id = id
@@ -70,11 +66,9 @@ def get_employee_details(id):
 
 # Return the Yearly Salary of the Employee using the given Employee ID
 def get_employee_yearly_salary(id):
-
     yearly_salary = 0
 
     if verify_id(id) is not False:
-
         employee = employees.get(id)
         monthly_salary = employee['MonthlySalary']
         yearly_salary = monthly_salary * 12
@@ -84,11 +78,9 @@ def get_employee_yearly_salary(id):
 
 # Return the Monthly Salary of the Employee using the given Employee ID
 def get_employee_monthly_salary(id):
-
     salary = 0
 
     if verify_id(id) is not False:
-
         employee = employees.get(id)
         monthly_salary = employee['MonthlySalary']
         salary = monthly_salary
@@ -98,11 +90,9 @@ def get_employee_monthly_salary(id):
 
 # Return the amount of Leave Days used by the Employee using the given Employee ID
 def get_employee_used_leave_days(id):
-
     remain_days = 0
 
     if verify_id(id) is not False:
-
         employee = employees.get(id)
         remain_days = {employee['LeaveDaysUsed']}
 
@@ -111,11 +101,9 @@ def get_employee_used_leave_days(id):
 
 # Return the Total number of Leave Days entitled to the Employee using the given Employee ID
 def get_employee__total_leave_days(id):
-
     leave_days = 0
 
     if verify_id(id) is not False:
-
         employee = employees.get(id)
         leave_days = {employee['AnnualLeaveDays']}
 
@@ -142,14 +130,14 @@ class ClientThread(threading.Thread):
 
         # Server sends Menu to Client
         self.client_socket.send(bytes("\n========== HR Control Panel Server ==========" +
-                                    "\n\t1. Get Employee Monthly Salary" +
-                                    "\n\t2. Get Employee Yearly Salary" +
-                                    "\n\t3. Get remaining Employee Vacation Days" +
-                                    "\n\t4. Get total Employee Vacation Days" +
-                                    "\n\t5. Get all available information about Employee" +
-                                    "\n\t6. Exit the Control Panel\n",
-                                    "utf-8"))
-        
+                                      "\n\t1. Get Employee Monthly Salary" +
+                                      "\n\t2. Get Employee Yearly Salary" +
+                                      "\n\t3. Get remaining Employee Vacation Days" +
+                                      "\n\t4. Get total Employee Vacation Days" +
+                                      "\n\t5. Get all available information about Employee" +
+                                      "\n\t6. Exit the Control Panel\n",
+                                      "utf-8"))
+
         # Server gets user choice from Client
         ch_in = self.client_socket.recv(1024).decode('utf-8')
         ch = int(ch_in)
@@ -180,7 +168,8 @@ class ClientThread(threading.Thread):
                         if verify_id(emp_id) is not False:
 
                             month_sal = get_employee_monthly_salary(emp_id)
-                            self.client_socket.send(bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
+                            self.client_socket.send(
+                                bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Monthly Salary', self.addr))
@@ -192,7 +181,8 @@ class ClientThread(threading.Thread):
 
                         if verify_id(emp_id) is not False:
                             year_sal = get_employee_yearly_salary(emp_id)
-                            self.client_socket.send(bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
+                            self.client_socket.send(
+                                bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Yearly Salary', self.addr))
@@ -218,7 +208,8 @@ class ClientThread(threading.Thread):
                         if verify_id(emp_id) is not False:
 
                             total_days = get_employee__total_leave_days(emp_id)
-                            self.client_socket.send(bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
+                            self.client_socket.send(
+                                bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Total Leave Days', self.addr))
@@ -234,14 +225,14 @@ class ClientThread(threading.Thread):
                             id, name, month_salary, year_salary, leave_days_available, leave_days_used = emp_details
 
                             self.client_socket.send(bytes(f"\nThe available information for this Employee is: " +
-                                                     f"\n\tEmployee ID: {id}" +
-                                                     f"\n\tEmployee Name: {name}" +
-                                                     f"\n\tEmployee Monthly Salary: €{month_salary}" +
-                                                     f"\n\tEmployee Yearly Salary: €{year_salary}" +
-                                                     f"\n\tEmployee Leave Days available: {leave_days_available}" +
-                                                     f"\n\tEmployee Leave Days used: {leave_days_used} \n",
-                                                     "utf-8"))
-                            
+                                                          f"\n\tEmployee ID: {id}" +
+                                                          f"\n\tEmployee Name: {name}" +
+                                                          f"\n\tEmployee Monthly Salary: €{month_salary}" +
+                                                          f"\n\tEmployee Yearly Salary: €{year_salary}" +
+                                                          f"\n\tEmployee Leave Days available: {leave_days_available}" +
+                                                          f"\n\tEmployee Leave Days used: {leave_days_used} \n",
+                                                          "utf-8"))
+
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get all available Employee Details', self.addr))
 
@@ -250,12 +241,11 @@ class ClientThread(threading.Thread):
 
         except ValueError:
             self.client_socket.send(bytes("Invalid choice, Please provide a number", "utf-8"))
-        
+
         self.client_socket.close()
 
 
 def start_server():
-
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('localhost', 12345))
     server_socket.listen(1)
