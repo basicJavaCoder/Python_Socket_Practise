@@ -1,6 +1,7 @@
 import socket
 import os
 import threading
+import queue
 
 
 # Create the Employees List to store Employee details
@@ -121,6 +122,9 @@ def get_employee__total_leave_days(id):
     return leave_days
 
 
+# Create message queue to send to RabbitMQ
+message_queue = queue.Queue()
+
 
 # The start of server socket code
 # Create a thread class to handle the new client connection
@@ -178,6 +182,9 @@ class ClientThread(threading.Thread):
                             month_sal = get_employee_monthly_salary(emp_id)
                             self.client_socket.send(bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
 
+                            # Send message to RabbitMQ Queue
+                            message_queue.put((emp_id, 'Get Employee Monthly Salary', self.addr))
+
                         else:
                             self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
 
@@ -185,8 +192,10 @@ class ClientThread(threading.Thread):
 
                         if verify_id(emp_id) is not False:
                             year_sal = get_employee_yearly_salary(emp_id)
-                            self.client_socket.send(
-                                bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
+                            self.client_socket.send(bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
+
+                            # Send message to RabbitMQ Queue
+                            message_queue.put((emp_id, 'Get Employee Yearly Salary', self.addr))
 
                         else:
                             self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
@@ -198,6 +207,9 @@ class ClientThread(threading.Thread):
                             used_days = get_employee_used_leave_days(emp_id)
                             self.client_socket.send(bytes(f"\nThis Employee used {used_days} Leave Days\n", "utf-8"))
 
+                            # Send message to RabbitMQ Queue
+                            message_queue.put((emp_id, 'Get Employee Used Leave Days', self.addr))
+
                         else:
                             self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
 
@@ -206,8 +218,10 @@ class ClientThread(threading.Thread):
                         if verify_id(emp_id) is not False:
 
                             total_days = get_employee__total_leave_days(emp_id)
-                            self.client_socket.send(
-                                bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
+                            self.client_socket.send(bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
+
+                            # Send message to RabbitMQ Queue
+                            message_queue.put((emp_id, 'Get Employee Total Leave Days', self.addr))
 
                         else:
                             self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
@@ -227,6 +241,10 @@ class ClientThread(threading.Thread):
                                                      f"\n\tEmployee Leave Days available: {leave_days_available}" +
                                                      f"\n\tEmployee Leave Days used: {leave_days_used} \n",
                                                      "utf-8"))
+                            
+                            # Send message to RabbitMQ Queue
+                            message_queue.put((emp_id, 'Get all available Employee Details', self.addr))
+
                         else:
                             self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
 
