@@ -39,6 +39,8 @@ def verify_id(id):
 # Return all details related to the Employee using the given Employee ID
 def get_employee_details(id):
 
+    details_list = []
+
     if verify_id(id) is not False:
 
         employee = employees.get(id)
@@ -61,7 +63,7 @@ def get_employee_details(id):
 
         ]
 
-        return details_list
+    return details_list
 
 
 # Return the Yearly Salary of the Employee using the given Employee ID

@@ -15,7 +15,7 @@ def start_client():
     choice = input("\033[1;33mEnter your choice: \033[0m")
     client_socket.send(bytes(choice, "utf-8"))
 
-    # Option 6 does not require additional information from Server, so we can check if it's is safe to close socket
+    # Option 6 does not require additional information from Server, so we can check if it is safe to close socket
     if choice != 6:
 
         # Server asks for Employee ID in order to proceed
