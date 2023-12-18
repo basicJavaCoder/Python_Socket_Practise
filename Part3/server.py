@@ -208,8 +208,7 @@ class ClientThread(threading.Thread):
                         if verify_id(emp_id) is not False:
 
                             total_days = get_employee__total_leave_days(emp_id)
-                            self.client_socket.send(
-                                bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
+                            self.client_socket.send(bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
 
                             # Send message to RabbitMQ Queue
                             message_queue.put((emp_id, 'Get Employee Total Leave Days', self.addr))
