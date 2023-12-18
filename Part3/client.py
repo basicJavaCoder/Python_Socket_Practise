@@ -1,6 +1,5 @@
 import socket
 
-
 def start_client():
 
     # Connect to the server via socket
