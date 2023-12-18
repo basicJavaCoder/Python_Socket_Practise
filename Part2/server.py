@@ -2,6 +2,8 @@ import socket
 import os
 import threading
 
+
+# Create the Employees List to store Employee details
 employees = {
     '001': {
         'Name': 'John Doe',
@@ -119,7 +121,9 @@ def get_employee__total_leave_days(id):
     return leave_days
 
 
-## The start of server socket code
+
+# The start of server socket code
+# Create a thread class to handle the new client connection
 class ClientThread(threading.Thread):
 
     def __init__(self, client_socket, addr):
@@ -147,6 +151,7 @@ class ClientThread(threading.Thread):
         ch = int(ch_in)
         print(ch)
 
+        # Check ch to make sure it is in range of the menu options, pass ValueError if not
         try:
             if ch < 1 or ch > 6:
 
