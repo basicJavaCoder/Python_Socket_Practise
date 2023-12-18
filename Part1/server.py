@@ -13,6 +13,12 @@ employees = {
         'MonthlySalary': 6000,
         'AnnualLeaveDays': 22,
         'LeaveDaysUsed': 3
+    },
+    '003': {
+        'Name': 'Lana McDevitt',
+        'MonthlySalary': 9000,
+        'AnnualLeaveDays': 30,
+        'LeaveDaysUsed': 2
     }
 }
 

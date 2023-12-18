@@ -1,5 +1,6 @@
 import socket
 import os
+import threading
 
 employees = {
     '001': {
@@ -13,6 +14,12 @@ employees = {
         'MonthlySalary': 6000,
         'AnnualLeaveDays': 22,
         'LeaveDaysUsed': 3
+    },
+    '003': {
+        'Name': 'Lana McDevitt',
+        'MonthlySalary': 9000,
+        'AnnualLeaveDays': 30,
+        'LeaveDaysUsed': 2
     }
 }
 
@@ -112,6 +119,118 @@ def get_employee__total_leave_days(id):
     return leave_days
 
 
+## The start of server socket code
+class ClientThread(threading.Thread):
+
+    def __init__(self, client_socket, addr):
+
+        threading.Thread.__init__(self)
+        self.client_socket = client_socket
+        self.addr = addr
+
+    def run(self):
+
+        print(f"Connection from {self.addr} has been established!")
+
+        # Server sends Menu to Client
+        self.client_socket.send(bytes("\n========== HR Control Panel Server ==========" +
+                                    "\n\t1. Get Employee Monthly Salary" +
+                                    "\n\t2. Get Employee Yearly Salary" +
+                                    "\n\t3. Get remaining Employee Vacation Days" +
+                                    "\n\t4. Get total Employee Vacation Days" +
+                                    "\n\t5. Get all available information about Employee" +
+                                    "\n\t6. Exit the Control Panel\n",
+                                    "utf-8"))
+        
+        # Server gets user choice from Client
+        ch_in = self.client_socket.recv(1024).decode('utf-8')
+        ch = int(ch_in)
+        print(ch)
+
+        try:
+            if ch < 1 or ch > 6:
+
+                self.client_socket.send(bytes("\nInvalid choice, Please provide a number between 1 and 6: ", "utf-8"))
+
+            else:
+
+                # Checking for menu item 6 because the Server does not need more information from Client
+                if ch == 6:
+
+                    self.client_socket.send(bytes("\n\nThank you for using the HR Control Panel!\n\n", "utf-8"))
+
+                else:
+
+                    # Request Employee ID from Client
+                    self.client_socket.send(bytes("Enter Employee ID: ", "utf-8"))
+                    emp_id = self.client_socket.recv(1024).decode('utf-8')
+
+                    # Handle calling the methods required
+                    if ch == 1:
+
+                        if verify_id(emp_id) is not False:
+
+                            month_sal = get_employee_monthly_salary(emp_id)
+                            self.client_socket.send(bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
+
+                        else:
+                            self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
+
+                    elif ch == 2:
+
+                        if verify_id(emp_id) is not False:
+                            year_sal = get_employee_yearly_salary(emp_id)
+                            self.client_socket.send(
+                                bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
+
+                        else:
+                            self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
+
+                    elif ch == 3:
+
+                        if verify_id(emp_id) is not False:
+
+                            used_days = get_employee_used_leave_days(emp_id)
+                            self.client_socket.send(bytes(f"\nThis Employee used {used_days} Leave Days\n", "utf-8"))
+
+                        else:
+                            self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
+
+                    elif ch == 4:
+
+                        if verify_id(emp_id) is not False:
+
+                            total_days = get_employee__total_leave_days(emp_id)
+                            self.client_socket.send(
+                                bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
+
+                        else:
+                            self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
+
+                    elif ch == 5:
+
+                        if verify_id(emp_id) is not False:
+
+                            emp_details = get_employee_details(emp_id)
+                            id, name, month_salary, year_salary, leave_days_available, leave_days_used = emp_details
+
+                            self.client_socket.send(bytes(f"\nThe available information for this Employee is: " +
+                                                     f"\n\tEmployee ID: {id}" +
+                                                     f"\n\tEmployee Name: {name}" +
+                                                     f"\n\tEmployee Monthly Salary: €{month_salary}" +
+                                                     f"\n\tEmployee Yearly Salary: €{year_salary}" +
+                                                     f"\n\tEmployee Leave Days available: {leave_days_available}" +
+                                                     f"\n\tEmployee Leave Days used: {leave_days_used} \n",
+                                                     "utf-8"))
+                        else:
+                            self.client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
+
+        except ValueError:
+            self.client_socket.send(bytes("Invalid choice, Please provide a number", "utf-8"))
+        
+        self.client_socket.close()
+
+
 def start_server():
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -128,105 +247,10 @@ def start_server():
             exit()
 
         client_socket, addr = server_socket.accept()
-        print(f"Connection from {addr} has been established!")
 
-        # Server sends Menu to Client
-        client_socket.send(bytes("\n========== HR Control Panel Server ==========" +
-                                 "\n\t1. Get Employee Monthly Salary" +
-                                 "\n\t2. Get Employee Yearly Salary" +
-                                 "\n\t3. Get remaining Employee Vacation Days" +
-                                 "\n\t4. Get total Employee Vacation Days" +
-                                 "\n\t5. Get all available information about Employee" +
-                                 "\n\t6. Exit the Control Panel\n",
-                                 "utf-8"))
-
-        # Server gets user choice from Client
-        ch_in = client_socket.recv(1024).decode('utf-8')
-        ch = int(ch_in)
-        print(ch)
-
-        try:
-            if ch < 1 or ch > 6:
-
-                client_socket.send(bytes("\nInvalid choice, Please provide a number between 1 and 6: ", "utf-8"))
-
-            else:
-
-                # Checking for menu item 6 because the Server does not need more information from Client
-                if ch == 6:
-
-                    client_socket.send(bytes("\n\nThank you for using the HR Control Panel!\n\n", "utf-8"))
-
-                else:
-
-                    # Request Employee ID from Client
-                    client_socket.send(bytes("Enter Employee ID: ", "utf-8"))
-                    emp_id = client_socket.recv(1024).decode('utf-8')
-
-                    # Handle calling the methods required
-                    if ch == 1:
-
-                        if verify_id(emp_id) is not False:
-
-                            month_sal = get_employee_monthly_salary(emp_id)
-                            client_socket.send(bytes(f"\nThis Employee's Monthly Salary is: €{month_sal}\n", "utf-8"))
-
-                        else:
-                            client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
-
-                    elif ch == 2:
-
-                        if verify_id(emp_id) is not False:
-                            year_sal = get_employee_yearly_salary(emp_id)
-                            client_socket.send(
-                                bytes(f"\nThe Yearly Salary for this Employee is: €{year_sal}\n", "utf-8"))
-
-                        else:
-                            client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
-
-                    elif ch == 3:
-
-                        if verify_id(emp_id) is not False:
-
-                            used_days = get_employee_used_leave_days(emp_id)
-                            client_socket.send(bytes(f"\nThis Employee used {used_days} Leave Days\n", "utf-8"))
-
-                        else:
-                            client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
-
-                    elif ch == 4:
-
-                        if verify_id(emp_id) is not False:
-
-                            total_days = get_employee__total_leave_days(emp_id)
-                            client_socket.send(
-                                bytes(f"\nThis Employee has {total_days} Leave Days available\n", "utf-8"))
-
-                        else:
-                            client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
-
-                    elif ch == 5:
-
-                        if verify_id(emp_id) is not False:
-
-                            emp_details = get_employee_details(emp_id)
-                            id, name, month_salary, year_salary, leave_days_available, leave_days_used = emp_details
-
-                            client_socket.send(bytes(f"\nThe available information for this Employee is: " +
-                                                     f"\n\tEmployee ID: {id}" +
-                                                     f"\n\tEmployee Name: {name}" +
-                                                     f"\n\tEmployee Monthly Salary: €{month_salary}" +
-                                                     f"\n\tEmployee Yearly Salary: €{year_salary}" +
-                                                     f"\n\tEmployee Leave Days available: {leave_days_available}" +
-                                                     f"\n\tEmployee Leave Days used: {leave_days_used} \n",
-                                                     "utf-8"))
-                        else:
-                            client_socket.send(bytes("\nError: Invalid Employee ID.", "utf-8"))
-
-        except ValueError:
-            client_socket.send(bytes("Invalid choice, Please provide a number", "utf-8"))
-
-        client_socket.close()
+        # Create a new thread for each client connection
+        client_thread = ClientThread(client_socket, addr)
+        client_thread.start()
 
 
 if __name__ == "__main__":
