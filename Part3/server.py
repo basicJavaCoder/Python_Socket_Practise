@@ -18,7 +18,7 @@ employees = {
         'LeaveDaysUsed': 3
     },
     '003': {
-        'Name': 'Lana Shelton',
+        'Name': 'Ruka Sarashina',
         'MonthlySalary': 9000,
         'AnnualLeaveDays': 30,
         'LeaveDaysUsed': 2
@@ -264,7 +264,7 @@ def start_server():
 
     while True:
 
-        # Closes the socket if close.txt exists in the running directory
+        # Closes the socket if close.txt exists in the running directory just incase the server stays open
         if os.path.exists('close.txt'):
             print("Closing server...")
             server_socket.close()
