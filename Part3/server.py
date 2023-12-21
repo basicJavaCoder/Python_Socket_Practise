@@ -5,24 +5,26 @@ import queue
 
 # Create the Employees List to store Employee details
 employees = {
-    '111': {
+
+    '221': {
         'Name': 'John Doe',
         'MonthlySalary': 5000,
         'AnnualLeaveDays': 20,
         'LeaveDaysUsed': 5
     },
-    '112': {
+    '222': {
         'Name': 'Jane Doe',
         'MonthlySalary': 6000,
         'AnnualLeaveDays': 22,
         'LeaveDaysUsed': 3
     },
-    '113': {
+    '223': {
         'Name': 'Ruka Sarashina',
         'MonthlySalary': 9000,
         'AnnualLeaveDays': 30,
         'LeaveDaysUsed': 2
     }
+    
 }
 
 
