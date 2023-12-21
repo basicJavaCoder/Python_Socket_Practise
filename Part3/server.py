@@ -59,7 +59,7 @@ def get_employee_details(id):
         emp_id = id
         name = employee['Name']
         month_sal = employee['MonthlySalary']
-        year_salary = employee['MonthlySalary'] * 12
+        year_salary =  month_sal * 12
         annual_leave = employee['AnnualLeaveDays']
         days_used = employee['LeaveDaysUsed']
 
@@ -154,7 +154,7 @@ class ClientThread(threading.Thread):
         self.client_socket.send(bytes("\n========== HR Control Panel Server ==========" +
                                       "\n\t1. Get Employee Monthly Salary" +
                                       "\n\t2. Get Employee Yearly Salary" +
-                                      "\n\t3. Get remaining Employee Vacation Days" +
+                                      "\n\t3. Get used Employee Vacation Days" +
                                       "\n\t4. Get total Employee Vacation Days" +
                                       "\n\t5. Get all available information about Employee" +
                                       "\n\t6. Exit the Control Panel\n",
