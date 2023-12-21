@@ -24,7 +24,7 @@ employees = {
         'AnnualLeaveDays': 30,
         'LeaveDaysUsed': 2
     }
-    
+
 }
 
 
@@ -33,8 +33,10 @@ def verify_id(id):
 
     valid_id = False
 
+    # Checks for the ID in the Details List
     employee = employees.get(id)
 
+    # If this ID is not in the List, then valid_id is set to False
     if employee is None:
         valid_id = False
     else:

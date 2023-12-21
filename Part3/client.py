@@ -2,6 +2,7 @@ import socket
 
 
 def start_client():
+    
     # Connect to the server via socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect(('localhost', 12345))
