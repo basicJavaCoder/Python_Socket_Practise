@@ -47,7 +47,7 @@ def get_employee_details(id):
         emp_id = id
         name = employee['Name']
         month_sal = employee['MonthlySalary']
-        year_salary = employee['MonthlySalary'] * 12
+        year_salary =  month_sal * 12
         annual_leave = employee['AnnualLeaveDays']
         days_used = employee['LeaveDaysUsed']
 
