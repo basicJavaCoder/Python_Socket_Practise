@@ -2,19 +2,19 @@ import socket
 import os
 
 employees = {
-    '001': {
+    '111': {
         'Name': 'John Doe',
         'MonthlySalary': 5000,
         'AnnualLeaveDays': 20,
         'LeaveDaysUsed': 5
     },
-    '002': {
+    '112': {
         'Name': 'Jane Doe',
         'MonthlySalary': 6000,
         'AnnualLeaveDays': 22,
         'LeaveDaysUsed': 3
     },
-    '003': {
+    '113': {
         'Name': 'Lana Shelton',
         'MonthlySalary': 9000,
         'AnnualLeaveDays': 30,

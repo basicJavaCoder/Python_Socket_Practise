@@ -5,19 +5,19 @@ import queue
 
 # Create the Employees List to store Employee details
 employees = {
-    '001': {
+    '111': {
         'Name': 'John Doe',
         'MonthlySalary': 5000,
         'AnnualLeaveDays': 20,
         'LeaveDaysUsed': 5
     },
-    '002': {
+    '112': {
         'Name': 'Jane Doe',
         'MonthlySalary': 6000,
         'AnnualLeaveDays': 22,
         'LeaveDaysUsed': 3
     },
-    '003': {
+    '113': {
         'Name': 'Ruka Sarashina',
         'MonthlySalary': 9000,
         'AnnualLeaveDays': 30,
@@ -28,6 +28,9 @@ employees = {
 
 # Verify that the given Employee ID is in the list
 def verify_id(id):
+
+    valid_id = False
+
     employee = employees.get(id)
 
     if employee is None:
@@ -44,8 +47,11 @@ def get_employee_details(id):
     details_list = []
 
     if verify_id(id) is not False:
+
+        # Get Employee Details based on the Employee ID from the Employees List
         employee = employees.get(id)
 
+        # Creating and assigning the variables for each Employee Detail in the List
         emp_id = id
         name = employee['Name']
         month_sal = employee['MonthlySalary']
@@ -53,6 +59,7 @@ def get_employee_details(id):
         annual_leave = employee['AnnualLeaveDays']
         days_used = employee['LeaveDaysUsed']
 
+        # Save Employee Details to the List so it can be returned to the Function call
         details_list = [
 
             emp_id,
@@ -69,9 +76,11 @@ def get_employee_details(id):
 
 # Return the Yearly Salary of the Employee using the given Employee ID
 def get_employee_yearly_salary(id):
+
     yearly_salary = 0
 
     if verify_id(id) is not False:
+
         employee = employees.get(id)
         monthly_salary = employee['MonthlySalary']
         yearly_salary = monthly_salary * 12
@@ -81,9 +90,11 @@ def get_employee_yearly_salary(id):
 
 # Return the Monthly Salary of the Employee using the given Employee ID
 def get_employee_monthly_salary(id):
+
     salary = 0
 
     if verify_id(id) is not False:
+
         employee = employees.get(id)
         monthly_salary = employee['MonthlySalary']
         salary = monthly_salary
@@ -97,6 +108,7 @@ def get_employee_used_leave_days(id):
     remain_days = 0
 
     if verify_id(id) is not False:
+        
         employee = employees.get(id)
         remain_days = {employee['LeaveDaysUsed']}
 
@@ -109,6 +121,7 @@ def get_employee__total_leave_days(id):
     leave_days = 0
 
     if verify_id(id) is not False:
+
         employee = employees.get(id)
         leave_days = {employee['AnnualLeaveDays']}
 
